@@ -12,21 +12,7 @@
 </div>
 
 <div class="row">
-  <.menu_card
-    icon="fa-gamepad"
-    icon_class="fa-duotone"
-    url={~p"/play/new"}
-  >
-    New game
-  </.menu_card>
   
-  <.menu_card
-    icon="fa-magnifying-glass-play"
-    icon_class="fa-duotone"
-    url={~p"/play/find"}
-  >
-    Find game
-  </.menu_card>
 
   <div :if={@current_user} class="col-sm-6 col-md-4 col-lg-3 col-xl-2 col-xxl-1 menu-card">
     <.link
@@ -39,18 +25,3 @@
     </.link>
   </div>
 </div>
-
-
-<div class="row mt-4">
-  <div class="col">
-    <h3>About this game</h3>
-    "MyApp; please" is a prototype simulation/training game. It is currently in a very early stage of development, more proof of concept than actual game. You are running a hospital ward, you need to treat the patients by performing mini games.
-    <br /><br />
-
-    This game is not (at least not yet) intended to be medically accurate in any way. It was created by a person whose medical experience is mostly contained in pretending to be a doctor for a recruitment video. For all comments, queries and requests please reach out to Teifion.
-    <br /><br />
-    
-    For more information check out the <a href="/readme">readme</a>
-  </div>
-</div>
-

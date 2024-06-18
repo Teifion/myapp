@@ -396,34 +396,6 @@ defmodule MyApp.Account.UserLib do
   def allow?(_not_a_user, _), do: false
 
   @doc """
-  Tests if a User or user_id has any of the listed restrictions applied to their account.
-  - Returns `true` to indicate the user is restricted
-  - Returns `false` to indicate the user is not restricted
-
-  If the user doesn't exist you will get back a true.
-
-  ## Examples
-
-    iex> restricted?(123, "Banned")
-    true
-
-    iex> restricted?(123, "NotRestriction")
-    false
-  """
-  @spec restricted?(MyApp.user_id() | User.t(), [String.t()] | String.t()) :: boolean
-  def restricted?(user_or_user_id, permissions) when is_binary(user_or_user_id),
-    do: restricted?(get_user_by_id(user_or_user_id), permissions)
-
-  def restricted?(%User{} = user, permissions) do
-    permissions
-    |> List.wrap()
-    |> Enum.map(fn p -> Enum.member?(user.restrictions, p) end)
-    |> Enum.any?()
-  end
-
-  def restricted?(_not_a_user, _), do: true
-
-  @doc """
   Tests is the user name is acceptable. Can be over-ridden using the config [fn_user_name_acceptor](config.html#fn_user_name_acceptor)
   """
   @name_parts1 ~w(serene energised humble auspicious decisive exemplary cheerful determined playful spry springy)
