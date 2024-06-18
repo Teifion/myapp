@@ -13,13 +13,6 @@ defmodule MyApp.Account.User do
   * `:behaviour_score` - Numerical score representing the behaviour of the user, a high score means they are better behaved
   * `:trust_score` - Numerical score representing the trustworthiness and accuracy of their reporting of other users
   * `:social_score` - Numerical score representing how much the user is liked or disliked by other players in general
-  * `:last_login_at` - DateTime of the last time they logged in when already logged out (so a user who is already logged in will not get this updated if they login with a 2nd application)
-  * `:last_played_at` - DateTime of the last time they played
-  * `:last_logout_at` - DateTime of the last time they logged out
-  * `:restrictions` - A list of the restrictions applied to the user account
-  * `:restricted_until` - DateTime of when the restrictions to the user may need to be revised (e.g. when a moderation action expires)
-  * `:shadow_banned?` - Boolean flag for spambots and trolls, when set to true the user should be allowed to see things as if fully logged in and be sent "success" type messages. In reality they are not able to effect change.
-
   """
 
   use MyAppMacros, :schema
@@ -29,7 +22,7 @@ defmodule MyApp.Account.User do
 
   @derive {Jason.Encoder,
            only:
-             ~w(name email groups permissions behaviour_score trust_score social_score last_login_at last_played_at last_logout_at restrictions restricted_until shadow_banned? smurf_of_id inserted_at updated_at)a}
+             ~w(name email groups permissions inserted_at updated_at)a}
   @primary_key {:id, Ecto.UUID, autogenerate: true}
   schema "account_users" do
     field(:name, :string)
@@ -39,23 +32,7 @@ defmodule MyApp.Account.User do
     field(:groups, {:array, :string}, default: [])
     field(:permissions, {:array, :string}, default: [])
 
-    field(:behaviour_score, :integer)
-    field(:trust_score, :integer)
-    field(:social_score, :integer)
-
-    field(:last_login_at, :utc_datetime)
-    field(:last_played_at, :utc_datetime)
-    field(:last_logout_at, :utc_datetime)
-
-    field(:restrictions, {:array, :string}, default: [])
-    field(:restricted_until, :utc_datetime)
-
-    field(:shadow_banned?, :boolean, default: false)
-
-    # Extra user.ex relations go here
-    belongs_to(:smurf_of, MyApp.Account.User)
-
-    has_one(:extra_data, MyApp.Account.ExtraUserData)
+    has_many :tokens, MyApp.Account.UserToken
 
     timestamps()
   end
@@ -69,17 +46,6 @@ defmodule MyApp.Account.User do
           password: String.t(),
           groups: [String.t()],
           permissions: [String.t()],
-          behaviour_score: integer() | nil,
-          trust_score: integer() | nil,
-          social_score: integer() | nil,
-          last_login_at: DateTime.t() | nil,
-          last_played_at: DateTime.t() | nil,
-          last_logout_at: DateTime.t() | nil,
-          restrictions: [String.t()],
-          restricted_until: DateTime.t() | nil,
-          shadow_banned?: boolean(),
-          smurf_of_id: integer() | nil,
-          extra_data: map() | nil,
           inserted_at: DateTime.t(),
           updated_at: DateTime.t()
         }
@@ -99,7 +65,7 @@ defmodule MyApp.Account.User do
       user
       |> cast(
         attrs,
-        ~w(name email groups behaviour_score trust_score social_score last_login_at last_played_at last_logout_at restrictions restricted_until shadow_banned? smurf_of_id)a
+        ~w(name email groups)a
       )
       |> calculate_user_permissions
       |> validate_required(~w(name email password permissions)a)
@@ -108,7 +74,7 @@ defmodule MyApp.Account.User do
       user
       |> cast(
         attrs,
-        ~w(name email password groups behaviour_score trust_score social_score last_login_at last_played_at last_logout_at restrictions restricted_until shadow_banned? smurf_of_id)a
+        ~w(name email password groups)a
       )
       |> calculate_user_permissions
       |> validate_required(~w(name email password permissions)a)
@@ -122,18 +88,13 @@ defmodule MyApp.Account.User do
   def changeset(user, %{"password" => _} = attrs, :register) do
     attrs =
       attrs
-      |> Map.merge(%{
-        "behaviour_score" => Application.get_env(:myapp, :default_behaviour_score),
-        "trust_score" => Application.get_env(:myapp, :default_trust_score),
-        "social_score" => Application.get_env(:myapp, :default_social_score)
-      })
       |> SchemaHelper.trim_strings(~w(name email)a)
       |> SchemaHelper.uniq_lists(~w(groups)a)
 
     user
     |> cast(
       attrs,
-      ~w(name email password groups behaviour_score trust_score social_score restrictions restricted_until)a
+      ~w(name email password groups)a
     )
     |> calculate_user_permissions
     |> validate_required(~w(name email password permissions)a)

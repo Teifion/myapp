@@ -33,14 +33,9 @@ defmodule MyApp.Account.UserTokenQueries do
   def _where(query, _, ""), do: query
   def _where(query, _, nil), do: query
 
-  def _where(query, :id, id_list) when is_list(id_list) do
+  def _where(query, :id, id_list) do
     from user_tokens in query,
-      where: user_tokens.id in ^id_list
-  end
-
-  def _where(query, :id, id) do
-    from user_tokens in query,
-      where: user_tokens.id == ^id
+      where: user_tokens.id in ^List.wrap(id_list)
   end
 
   def _where(query, :user_id, user_id) do

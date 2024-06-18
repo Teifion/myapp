@@ -26,16 +26,6 @@ defmodule MyApp.Application do
       # Start a worker by calling: MyApp.Worker.start_link(arg)
       # {MyApp.Worker, arg}
 
-      # Sups and Registries
-      {DynamicSupervisor, strategy: :one_for_one, name: MyApp.GameSupervisor},
-      {Registry, [keys: :unique, members: :auto, name: MyApp.LocalGameRegistry]},
-
-      {DynamicSupervisor, strategy: :one_for_one, name: MyApp.PlayerSupervisor},
-      {Registry, [keys: :unique, members: :auto, name: MyApp.LocalPlayerRegistry]},
-
-      {DynamicSupervisor, strategy: :one_for_one, name: MyApp.ExecutorSupervisor},
-      {Registry, [keys: :unique, members: :auto, name: MyApp.LocalExecutorRegistry]},
-
       # Caches
       add_cache(:user_token_identifier_cache, ttl: :timer.minutes(5)),
       add_cache(:myapp_metadata),

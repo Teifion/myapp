@@ -31,15 +31,9 @@ defmodule MyApp.Account.UserQueries do
   def _where(query, _, ""), do: query
   def _where(query, _, nil), do: query
 
-  def _where(query, :id, id_list) when is_list(id_list) do
+  def _where(query, :id, id_list) do
     from(users in query,
-      where: users.id in ^id_list
-    )
-  end
-
-  def _where(query, :id, id) do
-    from(users in query,
-      where: users.id == ^id
+      where: users.id in ^List.wrap(id_list)
     )
   end
 
@@ -125,75 +119,6 @@ defmodule MyApp.Account.UserQueries do
     )
   end
 
-  def _where(query, :has_restriction, restriction_name) do
-    from(users in query,
-      where: ^restriction_name in users.restrictions
-    )
-  end
-
-  def _where(query, :not_has_restriction, restriction_name) do
-    from(users in query,
-      where: ^restriction_name not in users.restrictions
-    )
-  end
-
-  def _where(query, :smurf_of, "Smurf"), do: _where(query, :smurf_of, true)
-  def _where(query, :smurf_of, "Non-smurf"), do: _where(query, :smurf_of, false)
-
-  def _where(query, :smurf_of, userid) when is_binary(userid) do
-    from(users in query,
-      where: users.smurf_of_id == ^userid
-    )
-  end
-
-  def _where(query, :smurf_of, true) do
-    from(users in query,
-      where: not is_nil(users.smurf_of_id)
-    )
-  end
-
-  def _where(query, :smurf_of, false) do
-    from(users in query,
-      where: is_nil(users.smurf_of_id)
-    )
-  end
-
-  def _where(query, :behaviour_score_gt, score) do
-    from(users in query,
-      where: users.behaviour_score > ^score
-    )
-  end
-
-  def _where(query, :behaviour_score_lt, score) do
-    from(users in query,
-      where: users.behaviour_score < ^score
-    )
-  end
-
-  def _where(query, :last_played_after, timestamp) do
-    from(users in query,
-      where: users.last_played_at >= ^timestamp
-    )
-  end
-
-  def _where(query, :last_played_before, timestamp) do
-    from(users in query,
-      where: users.last_played_at < ^timestamp
-    )
-  end
-
-  def _where(query, :last_login_after, timestamp) do
-    from(users in query,
-      where: users.last_login_at >= ^timestamp
-    )
-  end
-
-  def _where(query, :last_login_before, timestamp) do
-    from(users in query,
-      where: users.last_login_at < ^timestamp
-    )
-  end
-
   @spec do_order_by(Ecto.Query.t(), list | nil) :: Ecto.Query.t()
   defp do_order_by(query, nil), do: query
 
@@ -230,24 +155,6 @@ defmodule MyApp.Account.UserQueries do
     )
   end
 
-  def _order_by(query, "Last logged in") do
-    from(users in query,
-      order_by: [asc: users.last_login_at]
-    )
-  end
-
-  def _order_by(query, "Last played") do
-    from(users in query,
-      order_by: [desc: users.last_played_at]
-    )
-  end
-
-  def _order_by(query, "Last logged out") do
-    from(users in query,
-      order_by: [desc: users.last_logout_at]
-    )
-  end
-
   @spec do_preload(Ecto.Query.t(), list | nil) :: Ecto.Query.t()
   defp do_preload(query, nil), do: query
 
@@ -259,10 +166,10 @@ defmodule MyApp.Account.UserQueries do
     end)
   end
 
-  def _preload(query, :extra_data) do
+  def _preload(query, :tokens) do
     from(user in query,
-      left_join: extra_datas in assoc(user, :extra_data),
-      preload: [extra_data: extra_datas]
+      left_join: tokens in assoc(user, :tokens),
+      preload: [tokens: tokens]
     )
   end
 end
