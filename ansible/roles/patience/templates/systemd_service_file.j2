@@ -1,0 +1,19 @@
+# /etc/systemd/system/myapp.service
+[Unit]
+Description=MyApp middleware server
+After=network.target
+
+[Service]
+User=deploy
+WorkingDirectory=/etc/myapp
+ExecStart=/apps/myapp/bin/myapp start
+ExecStop=/apps/myapp/bin/myapp stop
+Restart=on-failure
+LimitNOFILE=65536
+RemainAfterExit=yes
+RestartSec=5
+EnvironmentFile=/apps/myapp.vars
+SyslogIdentifier=myapp
+
+[Install]
+WantedBy=multi-user.target

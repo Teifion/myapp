@@ -1,0 +1,43 @@
+<div class="row">
+  <div class="col p-4">
+    <h3>Just the basics</h3>
+    "MyApp; please" is a prototype simulation/training game. It is currently in a very early stage of development, more proof of concept than actual game. Currently the only scenario is a medical one but there is nothing preventing this system being used for other domains.
+    <br /><br />
+
+    <h3>Your objective</h3>
+    You are part of a hospital ward and need to discharge the patients as fast as you can. Diagnose their ailments and then perform treatments. Once the patient has no more ailments to treat they'll be discharged and you get a free bed (which another patient can now inhabit). Once you have no more waiting patients you win the game.
+    <br /><br />
+    
+    <h3>Multiplayer</h3>
+    This game is fully multiplayer, you can have as many players in one ward as you like. Just be careful you don't get in each others way...
+    <br /><br />
+    
+    <h3>A bit more info</h3>
+    This game is not (at least not yet) intended to be medically accurate in any way. It was created by a person whose medical experience is mostly contained in pretending to be a doctor for a recruitment video.
+    <br /><br />
+
+    All game data is completely artifical and randomly generated; no data (other than user account) is persisted. For all comments, queries and requests please reach out to Teifion.
+    <br /><br />
+
+    <h3>Possible features</h3>
+    <ul>
+      <li><strong>More jobs/scenarios</strong>: The system is designed around being able to add other jobs and scenarios.</li>
+      <li><strong>Player roles/siklls</strong>: only certain players can perform certain tasks making the teamwork and organisation more important.</li>
+      <li><strong>Game to game interaction</strong>: allowing the events (e.g. transfer of a patient) from one game to affect another</li>
+      <li><strong>"What if" analysis</strong>: the game knows how fast you complete different tasks and everything is deterministic, in theory it should be possible to calculate what would have happened if different decisions were made.</li>
+      <li><strong>Controllers</strong>: where one or more people are able to change values of the scenario in real time (adding patients etc).</li>
+    </ul>
+  </div>
+</div>
+
+
+<div class="row mt-4">
+  <.menu_card
+    icon={MyApp.Helper.StylingHelper.icon(:back)}
+    icon_class="fa-duotone"
+    url={~p"/"}
+  >
+    Back
+  </.menu_card>
+</div>
+

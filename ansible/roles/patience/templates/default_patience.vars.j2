@@ -1,0 +1,22 @@
+# /apps/myapp.vars
+
+ERL_MAX_PORTS=65536
+
+DATABASE_USERNAME="myapp_prod"
+DATABASE_PASSWORD="{{ db_password }}"
+DATABASE_HOSTNAME="{{ database_hostname }}"
+DATABASE_DB_NAME="myapp_prod"
+SECRET_KEY_BASE="{{ secret_key_base }}"
+DOMAIN_NAME="{{ ansible_host }}"
+RELEASE_NODE="myapp@{{ ansible_host }}"
+NODE_NAME="{{ inventory_hostname }}"
+
+# Website
+PATIENCE_SITE_TITLE="MyApp"
+
+# Optional values
+# JSON_SCHEMA_PATH="/apps/myapp/lib/myapp-0.0.1/priv/static/schema"
+# TLS_PORT=8201
+# CERT_ROOT="/etc/letsencrypt/live/{{ ansible_host }}"
+# FONTAWESOME_FREE_ONLY="TRUE"
+# ANGEN_INTEGRATION_MODE="FALSE"

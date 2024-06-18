@@ -1,0 +1,6 @@
+- name: "Run the MyApp deploy scripts"
+  hosts:
+    - web
+  roles:
+    - myapp_deploy
+  
