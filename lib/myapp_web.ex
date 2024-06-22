@@ -49,6 +49,15 @@ defmodule MyAppWeb do
     end
   end
 
+  def schema do
+    quote do
+      use Ecto.Schema
+      import Ecto.Changeset
+      import MyApp.Account.AuthLib, only: [allow?: 2, allow_any?: 2]
+      import MyApp.Helpers.SchemaHelper
+    end
+  end
+
   def live_view do
     quote do
       use Phoenix.LiveView,
@@ -64,6 +73,10 @@ defmodule MyAppWeb do
         ]
 
       alias MyApp.Helper.StylingHelper
+
+      defguard is_connected?(socket) when socket.transport_pid != nil
+      def ok(socket), do: {:ok, socket}
+      def noreply(socket), do: {:noreply, socket}
       unquote(html_helpers())
     end
   end

@@ -5,6 +5,16 @@ defmodule MyApp do
 
   @type user_id :: MyApp.Account.User.id()
 
+  @type query_args ::
+          keyword(
+            id: non_neg_integer() | nil,
+            where: list(),
+            preload: list(),
+            order_by: list(),
+            offset: non_neg_integer() | nil,
+            limit: non_neg_integer() | nil
+          )
+
   @spec uuid() :: String.t()
   def uuid() do
     Ecto.UUID.generate()

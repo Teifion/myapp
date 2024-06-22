@@ -384,13 +384,16 @@ defmodule MyAppWeb.CoreComponents do
   Renders a table with generic styling.
   ## Examples
       <.table id="users" rows={@users}>
-        <:col :let={user} label="id"><%= user.id %></:col>
-        <:col :let={user} label="username"><%= user.username %></:col>
+        <:col :let={user} label="ID"><%= user.id %></:col>
+        <:col :let={user} label="Username"><%= user.username %></:col>
       </.table>
 
       <.table id="users" rows={@users} table_class="table-sm table-hover">
-        <:col :let={user} label="id"><%= user.id %></:col>
-        <:col :let={user} label="username"><%= user.username %></:col>
+        <:col :let={user} label="ID"><%= user.id %></:col>
+        <:col :let={user} label="Username"><%= user.username %></:col>
+        <:action :let={user}>
+          <.link navigate={~p"/admin/users/#{user}"}>Show</.link>
+        </:action>
       </.table>
   """
   attr :id, :string, required: true
@@ -423,7 +426,7 @@ defmodule MyAppWeb.CoreComponents do
         <thead class="">
           <tr>
             <th :for={col <- @col} class=""><%= col[:label] %></th>
-            <th class="visually-hidden"><span><%= gettext("Actions") %></span></th>
+            <th :if={@action != []} colspan={Enum.count(@action)}><span class="visually-hidden"><%= gettext("Actions") %></span></th>
           </tr>
         </thead>
         <tbody

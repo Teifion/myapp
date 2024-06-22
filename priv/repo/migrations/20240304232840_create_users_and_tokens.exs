@@ -15,6 +15,7 @@ defmodule MyApp.Repo.Migrations.CreateUsersAndTokens do
     end
 
     execute "CREATE INDEX IF NOT EXISTS lower_username ON account_users (LOWER(name))"
+    create_if_not_exists(index(:account_users, [:name]))
     create_if_not_exists(unique_index(:account_users, [:email]))
 
     create table(:account_user_tokens) do
