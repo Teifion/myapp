@@ -2,7 +2,12 @@ defmodule MyAppWeb.NavComponents do
   @moduledoc false
   use Phoenix.Component
 
-  # import MyApp.Account.AuthLib, only: [allow?: 2, allow_any?: 2, allow_all?: 2]
+  import MyApp.Account.AuthLib,
+    only: [
+      allow?: 2
+      # allow_any?: 2,
+      # allow_all?: 2
+    ]
 
   use Phoenix.VerifiedRoutes,
     endpoint: MyAppWeb.Endpoint,
@@ -57,7 +62,27 @@ defmodule MyAppWeb.NavComponents do
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
             <.top_nav_item text="Home" active={@active == "home"} route={~p"/"} />
 
-            <.top_nav_item text="Readme" active={@active == "readme"} route={~p"/readme"} />
+            <%= if allow?(@current_user, ~w(admin)) do %>
+              <.top_nav_item text="Admin" active={@active == "admin"} route={~p"/admin"} />
+
+              <.top_nav_item
+                text="Accounts"
+                active={@active == "account"}
+                route={~p"/admin/accounts"}
+              />
+
+              <.top_nav_item text="Games" active={@active == "game"} route={~p"/admin/game"} />
+
+              <.top_nav_item text="Logging" active={@active == "logging"} route={~p"/admin/logging"} />
+
+              <.top_nav_item
+                text="Settings"
+                active={@active == "settings"}
+                route={~p"/admin/settings"}
+              />
+
+              <.top_nav_item text="Data export" active={@active == "data"} route={~p"/admin/data"} />
+            <% end %>
           </ul>
           <!-- Left links -->
         </div>
@@ -66,8 +91,8 @@ defmodule MyAppWeb.NavComponents do
         <!-- Right elements -->
         <div class="d-flex align-items-center">
           <%= if @current_user do %>
-            <MyAppWeb.UserComponents.recents_dropdown current_user={@current_user} />
-            <MyAppWeb.UserComponents.account_dropdown current_user={@current_user} />
+            <MyAppWeb.NavComponents.recents_dropdown current_user={@current_user} />
+            <MyAppWeb.NavComponents.account_dropdown current_user={@current_user} />
           <% else %>
             <a class="nav-link" href={~p"/login"}>
               Sign in
@@ -132,6 +157,7 @@ defmodule MyAppWeb.NavComponents do
   attr :dynamic_attrs, :map, default: []
   attr :col_classes, :string, default: nil
   slot :inner_block, required: true
+  attr :disabled, :boolean, default: false
 
   def menu_card(assigns) do
     style =
@@ -167,6 +193,7 @@ defmodule MyAppWeb.NavComponents do
       |> assign(:extra_classes, extra_classes)
       |> assign(:icon_size, icon_size)
       |> assign(:style, style)
+      |> assign(:url, if(assigns[:disabled], do: nil, else: assigns[:url]))
 
     ~H"""
     <div class={"#{@col_classes} menu-card #{@extra_classes}"} {@dynamic_attrs}>
@@ -179,13 +206,13 @@ defmodule MyAppWeb.NavComponents do
   end
 
   @doc """
-  <.sub_menu_button bsname={bsname} icon={lib} active={true/false} url={url}>
+  <.sub_menu_button colour={colour} icon={lib} active={true/false} url={url}>
     Text goes here
   </.sub_menu_button>
   """
   attr :icon, :string, default: nil
   attr :url, :string, required: true
-  attr :bsname, :string, default: "secondary"
+  attr :colour, :string, default: "secondary"
   attr :active, :boolean, default: false
   slot :inner_block, required: true
 
@@ -210,15 +237,15 @@ defmodule MyAppWeb.NavComponents do
   end
 
   @doc """
-  <.section_menu_button bsname={bsname} icon={lib} active={true/false} url={url}>
+  <.section_menu_button colour={colour} icon={lib} active={true/false} phx-action="do-something">
     Text goes here
   </.section_menu_button>
   """
   attr :icon, :string, default: nil
-  attr :url, :string, required: true
-  attr :bsname, :string, default: "secondary"
+  attr :colour, :string, default: "secondary"
   attr :active, :boolean, default: false
   slot :inner_block, required: true
+  attr :rest, :global, doc: "the arbitrary HTML attributes to add to the button"
 
   def section_menu_button(assigns) do
     assigns =
@@ -226,20 +253,45 @@ defmodule MyAppWeb.NavComponents do
       |> assign(:active_class, if(assigns[:active], do: "active"))
 
     ~H"""
-    <.link navigate={@url} class={"btn btn-outline-#{@bsname} #{@active_class}"}>
+    <div class={"btn btn-outline-#{@colour} #{@active_class}"} {@rest}>
       <Fontawesome.icon :if={@icon} icon={@icon} style={if @active, do: "solid", else: "regular"} />
       &nbsp; <%= render_slot(@inner_block) %>
+    </div>
+    """
+  end
+
+  @doc """
+  <.section_menu_button_url colour={colour} icon={lib} active={true/false} url={url}>
+    Text goes here
+  </.section_menu_button_url>
+  """
+  attr :icon, :string, default: nil
+  attr :url, :string, default: nil
+  attr :colour, :string, default: "secondary"
+  attr :active, :boolean, default: false
+  slot :inner_block, required: true
+  attr :rest, :global, doc: "the arbitrary HTML attributes to add to the button"
+
+  def section_menu_button_url(assigns) do
+    assigns =
+      assigns
+      |> assign(:active_class, if(assigns[:active], do: "active"))
+
+    ~H"""
+    <.link navigate={@url} class={"btn btn-outline-#{@colour} #{@active_class}"} {@rest}>
+      <Fontawesome.icon :if={@icon} icon={@icon} style={if @active, do: "solid", else: "regular"} />
+      <%= render_slot(@inner_block) %>
     </.link>
     """
   end
 
   @doc """
-  <.section_menu_button bsname={bsname} icon={lib} active={true/false} url={url}>
+  <.section_menu_button colour={colour} icon={lib} active={true/false} url={url}>
     Text goes here
   </.section_menu_button>
 
   <.section_menu_button
-      bsname={@view_colour}
+      colour={@view_colour}
       icon={StylingHelper.icon(:list)}
       active={@active == "index"}
       url={~p"/account/relationship"}
@@ -249,9 +301,10 @@ defmodule MyAppWeb.NavComponents do
   """
   attr :icon, :string, default: nil
   attr :url, :string, required: true
-  attr :bsname, :string, default: "secondary"
+  attr :colour, :string, default: "secondary"
   attr :active, :boolean, default: false
   slot :inner_block, required: true
+  attr :rest, :global, doc: "the arbitrary HTML attributes to add to the button"
 
   def section_menu_button_patch(assigns) do
     assigns =
@@ -259,7 +312,7 @@ defmodule MyAppWeb.NavComponents do
       |> assign(:active_class, if(assigns[:active], do: "active"))
 
     ~H"""
-    <.link patch={@url} class={"btn btn-outline-#{@bsname} #{@active_class}"}>
+    <.link patch={@url} class={"btn btn-outline-#{@colour} #{@active_class}"} {@rest}>
       <Fontawesome.icon :if={@icon} icon={@icon} style={if @active, do: "solid", else: "regular"} />
       <%= render_slot(@inner_block) %>
     </.link>
@@ -302,38 +355,104 @@ defmodule MyAppWeb.NavComponents do
   end
 
   @doc """
-  <MyAppWeb.NavComponents.ward_nav_item active={active} route={route} icon={icon} />
+  <MyAppWeb.NavComponents.recents_dropdown current_user={@current_user} />
   """
-  def ward_nav_item(assigns) do
-    active = if assigns[:active], do: "btn-primary", else: "btn-outline-info"
+  attr :current_user, :map, required: true
+
+  def recents_dropdown(assigns) do
+    # recents =
+    #   assigns[:current_user]
+    #   |> MyApp.Account.RecentlyUsedCache.get_recently()
+    #   |> Enum.take(15)
+
+    recents = []
 
     assigns =
       assigns
-      |> assign(:active, active)
+      |> assign(recents: recents)
 
     ~H"""
-    <.link
-      patch={@route}
-      class={"btn #{@active}"}
-    >
-      <Fontawesome.icon icon={@icon} style="solid" />
-      <%= @text %>
-    </.link>
+    <div :if={not Enum.empty?(@recents)} class="nav-item dropdown mx-2">
+      <a
+        class="dropdown-toggle dropdown-toggle-icon-only"
+        href="#"
+        data-bs-toggle="dropdown"
+        aria-haspopup="true"
+        aria-expanded="false"
+        id="user-recents-link"
+      >
+        <i class="fa-solid fa-clock fa-fw fa-lg"></i>
+      </a>
+      <div
+        class="dropdown-menu dropdown-menu-end"
+        aria-labelledby="user-recents-link"
+        style="min-width: 300px; max-width: 500px;"
+      >
+        <span class="dropdown-header" style="font-weight: bold;">
+          Recent items
+        </span>
+
+        <a :for={r <- @recents} class="dropdown-item" href={r.url}>
+          <Fontawesome.icon icon={r.type_icon} style="regular" css={"color: #{r.type_colour}"} />
+
+          <%= if r.item_icon do %>
+            <Fontawesome.icon icon={r.item_icon} style="regular" css={"color: #{r.item_colour}"} />
+          <% else %>
+            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+          <% end %>
+          &nbsp; <%= r.item_label %>
+        </a>
+      </div>
+    </div>
     """
   end
 
   @doc """
-  <MyAppWeb.NavComponents.ward_navbar game_id={@game_id} active={"string"} />
+  <MyAppWeb.NavComponents.account_dropdown current_user={@current_user} />
   """
-  attr :active, :string, required: true
-  attr :game_id, :string, required: true
+  attr :current_user, :map, required: true
 
-  def ward_navbar(assigns) do
+  def account_dropdown(assigns) do
     ~H"""
-    <div class="">
-      <.ward_nav_item text="Ward" active={@active == "ward"} route={~p"/play/ward/#{@game_id}"} icon="stretcher" />
+    <div class="nav-item dropdown mx-2">
+      <a
+        class="dropdown-toggle dropdown-toggle-icon-only"
+        href="#"
+        data-bs-toggle="dropdown"
+        aria-haspopup="true"
+        aria-expanded="false"
+        id="user-dropdown-link"
+      >
+        <i class="fa-solid fa-user fa-fw fa-lg"></i>
+      </a>
+      <div
+        class="dropdown-menu dropdown-menu-end"
+        aria-labelledby="user-dropdown-link"
+        style="min-width: 300px; max-width: 500px;"
+      >
+        <a class="dropdown-item" href={~p"/"}>
+          <i class="fa-fw fa-user fa-solid"></i> &nbsp;
+          Account
+        </a>
 
-      <.ward_nav_item text="Patients" active={@active == "patients"} route={~p"/play/patients/#{@game_id}"} icon="users-medical" />
+        <hr style="margin: 0;" />
+
+        <form action={~p"/logout"} method="post" class="link" id="signout-form" style="margin: 0;">
+          <input type="hidden" name="_csrf_token" value={Phoenix.Controller.get_csrf_token()} />
+
+          <a
+            class="dropdown-item"
+            data-submit="parent"
+            href="#"
+            rel="nofollow"
+            onclick="$('#signout-form').submit();"
+            id="signout-link"
+          >
+            <i class="fa-regular fa-sign-out fa-fw"></i> &nbsp;
+            Sign out <%= @current_user.name %>
+          </a>
+        </form>
+      </div>
     </div>
     """
   end

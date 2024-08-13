@@ -10,6 +10,63 @@ defmodule MyAppWeb.UserComponents do
     statics: MyAppWeb.static_paths()
 
   @doc """
+  <MyAppWeb.UserComponents.filter_bar active="active" />
+
+  <MyAppWeb.UserComponents.filter_bar active="active">
+    Right side content here
+  </MyAppWeb.UserComponents.filter_bar>
+  """
+  attr :selected, :string, default: "list"
+  slot :inner_block, required: false
+
+  def filter_bar(assigns) do
+    ~H"""
+    <div class="row section-menu">
+      <div class="col">
+        <.section_menu_button_url
+          colour="info"
+          icon={StylingHelper.icon(:list)}
+          active={@selected == "list"}
+          url={~p"/admin/accounts"}
+        >
+          List
+        </.section_menu_button_url>
+
+        <.section_menu_button_url
+          colour="info"
+          icon={StylingHelper.icon(:new)}
+          active={@selected == "new"}
+          url={~p"/admin/accounts/user/new"}
+        >
+          New
+        </.section_menu_button_url>
+
+        <.section_menu_button_url
+          :if={@selected == "show"}
+          colour="info"
+          icon={StylingHelper.icon(:detail)}
+          active={@selected == "show"}
+          url="#"
+        >
+          Show
+        </.section_menu_button_url>
+
+        <.section_menu_button_url
+          :if={@selected == "edit"}
+          colour="info"
+          icon={StylingHelper.icon(:edit)}
+          active={@selected == "edit"}
+          url="#"
+        >
+          Edit
+        </.section_menu_button_url>
+      </div>
+      <%= render_slot(@inner_block) %>
+    </div>
+    """
+  end
+
+  @doc """
   <MyAppWeb.UserComponents.status_icon user={user} />
   """
   def status_icon(%{user: %{data: user_data} = user} = assigns) do

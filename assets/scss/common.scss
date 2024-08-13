@@ -1,4 +1,5 @@
 // CORE VARIABLES
+@import './mdb/variables';
 @import './bootstrap/variables';
 
 // BOOTSTRAP CORE
@@ -45,9 +46,55 @@
 // Utilities
 @import './bootstrap/utilities/api';
 
+// MDB CORE
+@import './mdb/mixins';
+
+// MDB CORE COMPONENTS
+@import './mdb/root';
+@import './mdb/reboot';
+@import './mdb/type';
+@import './mdb/colors';
+@import './mdb/shadows';
+@import './mdb/flag';
+@import './mdb/images';
+
+// MDB FORMS
+@import './mdb/forms/form-control';
+@import './mdb/forms/form-select';
+@import './mdb/forms/form-check';
+@import './mdb/forms/form-file';
+@import './mdb/forms/input-group';
+@import './mdb/forms/validation';
+@import './mdb/forms/form-range';
+
+// MDB COMPONENTS
+@import './mdb/tables';
+@import './mdb/buttons';
+@import './mdb/deprecated';
+@import './mdb/dropdown';
+@import './mdb/button-group';
+@import './mdb/nav';
+@import './mdb/navbar';
+@import './mdb/card';
+@import './mdb/breadcrumb';
+@import './mdb/pagination';
+@import './mdb/badge';
+@import './mdb/alert';
+@import './mdb/progress';
+@import './mdb/list-group';
+@import './mdb/close';
+@import './mdb/modal';
+@import './mdb/toasts';
+@import './mdb/tooltip';
+@import './mdb/popover';
+@import './mdb/scrollspy';
+@import './mdb/ripple';
+@import './mdb/range';
+@import './mdb/accordion';
+@import './mdb/carousel';
+
 // Custom styles
 $admin: $danger;
 $staff: $warning;
 
 @import './custom/styles';
-

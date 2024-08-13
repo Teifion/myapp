@@ -336,7 +336,7 @@ defmodule MyAppWeb.CoreComponents do
 
   def label(assigns) do
     ~H"""
-    <label for={@for} class="form-label">
+    <label for={@for} class="control-label">
       <%= render_slot(@inner_block) %>
     </label>
     """

@@ -46,7 +46,7 @@ defmodule MyApp.MixProject do
       # These came with Phoenix
       {:phoenix, "~> 1.7.0"},
       {:phoenix_ecto, "~> 4.4"},
-      {:ecto_sql, "~> 3.6"},
+      {:ecto_sql, "~> 3.10"},
       {:postgrex, ">= 0.0.0"},
       {:phoenix_html, "~> 4.0"},
       {:phoenix_live_reload, "~> 1.4", only: :dev},
@@ -56,7 +56,7 @@ defmodule MyApp.MixProject do
       {:esbuild, "~> 0.5", runtime: Mix.env() == :dev},
       {:swoosh, "~> 1.3"},
       {:finch, "~> 0.13"},
-      {:telemetry_metrics, "~> 0.6"},
+      {:telemetry_metrics, "~> 1.0"},
       {:telemetry_poller, "~> 1.0"},
       {:gettext, "~> 0.20"},
       {:jason, "~> 1.2"},
@@ -65,14 +65,14 @@ defmodule MyApp.MixProject do
       # Extra deps
       {:ecto_psql_extras, "~> 0.7"},
       {:timex, "~> 3.7.5"},
-      {:argon2_elixir, "~> 3.0"},
+      {:argon2_elixir, "~> 4.0"},
       {:phoenix_pubsub, "~> 2.0"},
       {:dart_sass, "~> 0.6"},
       {:fontawesome_icons, "~> 0.0.5"},
       {:cachex, "~> 3.6"},
       {:typedstruct, "~> 0.5.2", runtime: false},
 
-      {:excoveralls, "~> 0.15.3", only: :test, runtime: false},
+      {:excoveralls, "~> 0.18.1", only: :test, runtime: false},
       {:credo, "~> 1.6", only: [:dev, :test], runtime: false}
     ]
   end
@@ -89,9 +89,21 @@ defmodule MyApp.MixProject do
       "ecto.setup": ["ecto.create", "ecto.migrate", "run priv/repo/seeds.exs"],
       "ecto.reset": ["ecto.drop", "ecto.setup"],
       test: ["ecto.create --quiet", "ecto.migrate --quiet", "test"],
+      "test.reset": ["ecto.drop --quiet", "test.setup"],
+      "test.setup": ["ecto.create --quiet", "ecto.migrate --quiet"],
       "assets.setup": ["esbuild.install --if-missing"],
       "assets.build": ["esbuild default"],
-      "assets.deploy": ["esbuild default --minify", "phx.digest"]
+      "assets.deploy": [
+        "esbuild default --minify",
+        "sass dark --no-source-map --style=compressed",
+        "sass light --no-source-map --style=compressed",
+        "phx.digest"
+      ],
+      "test.ci": [
+        "format --check-formatted",
+        "deps.unlock --check-unused",
+        "test --raise"
+      ]
     ]
   end
 end

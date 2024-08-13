@@ -38,6 +38,21 @@ defmodule MyAppWeb.Router do
     get "/readme", PageController, :readme
   end
 
+  scope "/admin/accounts", MyAppWeb.Admin.Account do
+    pipe_through [:browser]
+
+    live_session :admin_accounts,
+      on_mount: [
+        {MyAppWeb.UserAuth, :ensure_authenticated},
+        {MyAppWeb.UserAuth, {:authorise, ~w(admin)}}
+      ] do
+      live "/", IndexLive
+      live "/user/new", NewLive
+      live "/user/edit/:user_id", ShowLive, :edit
+      live "/user/:user_id", ShowLive
+    end
+  end
+
   scope "/play", MyAppWeb.Play do
     pipe_through [:browser]
 

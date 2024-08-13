@@ -35,4 +35,48 @@ defmodule MyAppWeb.ConnCase do
     MyApp.DataCase.setup_sandbox(tags)
     {:ok, conn: Phoenix.ConnTest.build_conn()}
   end
+
+  @spec auth(map()) :: map()
+  def auth(data) do
+    {:ok, user} =
+      MyApp.Account.create_user(%{
+        name: MyApp.uuid(),
+        email: "#{MyApp.uuid()}@test",
+        password: "password",
+        groups: [],
+        permissions: []
+      })
+
+    data
+    |> Map.put(:user, user)
+    |> log_in_user
+  end
+
+  @spec admin_auth(map()) :: map()
+  def admin_auth(data) do
+    {:ok, user} =
+      MyApp.Account.create_user(%{
+        name: MyApp.uuid(),
+        email: "#{MyApp.uuid()}@test",
+        password: "password",
+        groups: ["admin"],
+        permissions: ["admin"]
+      })
+
+    data
+    |> Map.put(:user, user)
+    |> log_in_user
+  end
+
+  @spec log_in_user(map()) :: map()
+  defp log_in_user(%{conn: conn, user: user} = data) do
+    {:ok, token} = MyApp.Account.create_user_token(user.id, "test", "test-user", "127.0.0.1")
+
+    conn =
+      conn
+      |> Phoenix.ConnTest.init_test_session(%{})
+      |> Plug.Conn.put_session(:user_token, token.identifier_code)
+
+    %{data | conn: conn}
+  end
 end

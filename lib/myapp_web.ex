@@ -17,7 +17,7 @@ defmodule MyAppWeb do
   those modules here.
   """
 
-  def static_paths, do: ~w(css js assets webfonts fonts images favicon.ico robots.txt)
+  def static_paths, do: ~w(css js assets webfonts fonts images favicon.png favicon.ico robots.txt)
 
   def router do
     quote do
@@ -81,9 +81,23 @@ defmodule MyAppWeb do
     end
   end
 
+  def component do
+    quote do
+      use Phoenix.Component
+      import MyAppWeb.CoreComponents
+
+      alias MyApp.Helper.StylingHelper
+      import MyApp.Helper.StringHelper, only: [format_number: 1]
+      unquote(html_helpers())
+    end
+  end
+
   def live_component do
     quote do
       use Phoenix.LiveComponent
+
+      alias MyApp.Helper.StylingHelper
+      import MyApp.Helper.StringHelper, only: [format_number: 1]
 
       unquote(html_helpers())
     end
@@ -107,11 +121,14 @@ defmodule MyAppWeb do
       # HTML escaping functionality
       import Phoenix.HTML
       # Core UI components and translation
-      import MyAppWeb.{CoreComponents, NavComponents}
+      import MyAppWeb.{CoreComponents, NavComponents, BootstrapComponents}
       import MyAppWeb.Gettext
 
       # Shortcut for generating JS commands
       alias Phoenix.LiveView.JS
+
+      import MyApp.Helper.TimexHelper,
+        only: [represent_seconds: 1, represent_minutes: 1, date_to_str: 1, date_to_str: 2]
 
       # Routes generation with the ~p sigil
       unquote(verified_routes())

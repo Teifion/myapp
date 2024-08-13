@@ -12,6 +12,7 @@ defmodule MyApp.Account.UserToken do
   import Ecto.Changeset
 
   @derive {Jason.Encoder, only: ~w(user_id identifier_code renewal_code expires_at)a}
+  @primary_key {:id, Ecto.UUID, autogenerate: true}
   schema "account_user_tokens" do
     belongs_to(:user, MyApp.Account.User, type: Ecto.UUID)
 
@@ -27,7 +28,7 @@ defmodule MyApp.Account.UserToken do
     timestamps()
   end
 
-  @type id :: non_neg_integer()
+  @type id :: Ecto.UUID.t()
   @type identifier_code :: String.t()
   @type renewal_code :: String.t()
 
