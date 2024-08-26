@@ -1,9 +1,6 @@
 defmodule MyApp.Account.UserTokenQueries do
   @moduledoc false
-  import Ecto.Query, warn: false
-  import MyApp.Helpers.QueryMacros
-  alias MyApp.Helpers.QueryHelper
-  alias MyApp.Repo
+  use MyAppWeb, :queries
   alias MyApp.Account.UserToken
   require Logger
 

@@ -58,6 +58,15 @@ defmodule MyAppWeb do
     end
   end
 
+  def queries do
+    quote do
+      import Ecto.Query, warn: false
+      import MyApp.Helpers.QueryMacros
+      alias MyApp.Helpers.QueryHelper
+      alias MyApp.Repo
+    end
+  end
+
   def live_view do
     quote do
       use Phoenix.LiveView,
