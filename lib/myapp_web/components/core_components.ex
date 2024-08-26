@@ -32,19 +32,35 @@ defmodule MyAppWeb.CoreComponents do
 
   def modal(assigns) do
     ~H"""
-    <div class={"modal fade show"} id={@id} tabindex="-1" aria-labelledby={"#{@id}-description"} style="display: block;" aria-modal="true" role="dialog" :if={@show}>
+    <div
+      :if={@show}
+      class="modal fade show"
+      id={@id}
+      tabindex="-1"
+      aria-labelledby={"#{@id}-description"}
+      style="display: block;"
+      aria-modal="true"
+      role="dialog"
+    >
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
             <%= render_slot(@title) %>
-            <button type="button" class="btn-close" phx-click="close-modal" phx-value-id={@id} aria-label="Close"></button>
+            <button
+              type="button"
+              class="btn-close"
+              phx-click="close-modal"
+              phx-value-id={@id}
+              aria-label="Close"
+            >
+            </button>
           </div>
 
           <div class="modal-body">
             <%= render_slot(@body) %>
           </div>
 
-          <div class="modal-footer" :if={not Enum.empty?(@footer)}>
+          <div :if={not Enum.empty?(@footer)} class="modal-footer">
             <%= render_slot(@footer) %>
           </div>
         </div>
@@ -426,7 +442,9 @@ defmodule MyAppWeb.CoreComponents do
         <thead class="">
           <tr>
             <th :for={col <- @col} class=""><%= col[:label] %></th>
-            <th :if={@action != []} colspan={Enum.count(@action)}><span class="visually-hidden"><%= gettext("Actions") %></span></th>
+            <th :if={@action != []} colspan={Enum.count(@action)}>
+              <span class="visually-hidden"><%= gettext("Actions") %></span>
+            </th>
           </tr>
         </thead>
         <tbody

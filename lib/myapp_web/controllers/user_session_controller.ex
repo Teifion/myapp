@@ -8,8 +8,10 @@ defmodule MyAppWeb.UserSessionController do
     case Cachex.get(:one_time_login_code, code) do
       {:ok, nil} ->
         redirect(conn, to: ~p"/guest")
+
       {:ok, token_id} ->
         maybe_login_with_token(conn, token_id)
+
       _ ->
         redirect(conn, to: ~p"/guest")
     end

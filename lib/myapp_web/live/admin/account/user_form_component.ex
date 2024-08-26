@@ -3,7 +3,7 @@ defmodule MyAppWeb.Account.UserFormComponent do
   use MyAppWeb, :live_component
   # import MyApp.Helper.ColourHelper, only: [rgba_css: 2]
 
-  alias Teiserver.Account
+  alias MyApp.Account
 
   @impl true
   def render(assigns) do

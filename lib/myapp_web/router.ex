@@ -38,6 +38,18 @@ defmodule MyAppWeb.Router do
     get "/readme", PageController, :readme
   end
 
+  scope "/admin", MyAppWeb.Admin do
+    pipe_through [:browser]
+
+    live_session :admin_index,
+      on_mount: [
+        {MyAppWeb.UserAuth, :ensure_authenticated},
+        {MyAppWeb.UserAuth, {:authorise, "admin"}}
+      ] do
+      live "/", HomeLive, :index
+    end
+  end
+
   scope "/admin/accounts", MyAppWeb.Admin.Account do
     pipe_through [:browser]
 
@@ -73,18 +85,6 @@ defmodule MyAppWeb.Router do
       live "/patients/:game_id", PatientsLive.Index, :index
       live "/desk/:game_id", DeskLive.Index, :index
       live "/job/:game_id/:job_id", JobLive.Index, :index
-    end
-  end
-
-  scope "/admin", MyAppWeb.Admin do
-    pipe_through [:browser]
-
-    live_session :admin_index,
-      on_mount: [
-        {MyAppWeb.UserAuth, :ensure_authenticated},
-        {MyAppWeb.UserAuth, {:authorise, "admin"}}
-      ] do
-      live "/", HomeLive.Index, :index
     end
   end
 

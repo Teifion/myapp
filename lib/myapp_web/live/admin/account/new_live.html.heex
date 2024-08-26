@@ -1,4 +1,4 @@
-<MyAppWeb.Account.UserComponents.filter_bar selected="new" />
+<MyAppWeb.UserComponents.filter_bar selected="new" />
 
 <div class="row mt-4">
   <div class="col">
@@ -6,7 +6,7 @@
       module={MyAppWeb.Account.UserFormComponent}
       id={:new}
       action={:new}
-      user={%Teiserver.Account.User{}}
+      user={%MyApp.Account.User{}}
       patch={~p"/admin/accounts"}
       title="New user form"
       current_user={@current_user}

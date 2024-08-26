@@ -20,9 +20,7 @@ defmodule MyApp.Account.User do
 
   @foreign_key_type Ecto.UUID
 
-  @derive {Jason.Encoder,
-           only:
-             ~w(name email groups permissions inserted_at updated_at)a}
+  @derive {Jason.Encoder, only: ~w(name email groups permissions inserted_at updated_at)a}
   @primary_key {:id, Ecto.UUID, autogenerate: true}
   schema "account_users" do
     field(:name, :string)

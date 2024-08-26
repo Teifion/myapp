@@ -1,7 +1,9 @@
 defmodule MyApp.Account.UserTokenQueries do
   @moduledoc false
   import Ecto.Query, warn: false
+  import MyApp.Helpers.QueryMacros
   alias MyApp.Helpers.QueryHelper
+  alias MyApp.Repo
   alias MyApp.Account.UserToken
   require Logger
 
@@ -29,7 +31,7 @@ defmodule MyApp.Account.UserTokenQueries do
     end)
   end
 
-  @spec _where(Ecto.Query.t(), Atom.t(), any()) :: Ecto.Query.t()
+  @spec _where(Ecto.Query.t(), atom(), any()) :: Ecto.Query.t()
   def _where(query, _, ""), do: query
   def _where(query, _, nil), do: query
 
@@ -41,6 +43,11 @@ defmodule MyApp.Account.UserTokenQueries do
   def _where(query, :user_id, user_id) do
     from user_tokens in query,
       where: user_tokens.user_id == ^user_id
+  end
+
+  def _where(query, :context, context) do
+    from user_tokens in query,
+      where: user_tokens.context in ^List.wrap(context)
   end
 
   def _where(query, :identifier_code, identifier_code) do
@@ -71,7 +78,7 @@ defmodule MyApp.Account.UserTokenQueries do
   @spec do_order_by(Ecto.Query.t(), list | nil) :: Ecto.Query.t()
   defp do_order_by(query, nil), do: query
 
-  defp do_order_by(query, params) when is_list(params) do
+  defp do_order_by(query, params) do
     params
     |> List.wrap()
     |> Enum.reduce(query, fn key, query_acc ->
@@ -80,16 +87,6 @@ defmodule MyApp.Account.UserTokenQueries do
   end
 
   @spec _order_by(Ecto.Query.t(), any()) :: Ecto.Query.t()
-  def _order_by(query, "Name (A-Z)") do
-    from user_tokens in query,
-      order_by: [asc: user_tokens.name]
-  end
-
-  def _order_by(query, "Name (Z-A)") do
-    from user_tokens in query,
-      order_by: [desc: user_tokens.name]
-  end
-
   def _order_by(query, "Newest first") do
     from user_tokens in query,
       order_by: [desc: user_tokens.inserted_at]
@@ -98,6 +95,16 @@ defmodule MyApp.Account.UserTokenQueries do
   def _order_by(query, "Oldest first") do
     from user_tokens in query,
       order_by: [asc: user_tokens.inserted_at]
+  end
+
+  def _order_by(query, "Most recently used") do
+    from user_tokens in query,
+      order_by: [desc: user_tokens.last_used_at]
+  end
+
+  def _order_by(query, "Last recently used") do
+    from user_tokens in query,
+      order_by: [asc: user_tokens.last_used_at]
   end
 
   @spec do_preload(Ecto.Query.t(), List.t() | nil) :: Ecto.Query.t()

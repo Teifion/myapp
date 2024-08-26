@@ -8,12 +8,12 @@ defmodule MyAppWeb.Admin.Account.ShowLive do
       socket
       |> assign(:site_menu_active, "account")
       |> assign(:user_id, user_id)
-      |> assign(:client, Teiserver.get_client(user_id))
+      # |> assign(:client, MyApp.Account.get_client(user_id))
       |> get_user
       |> get_other_data
 
     if socket.assigns.user do
-      :ok = Teiserver.subscribe(Teiserver.Connections.ClientLib.client_topic(user_id))
+      # :ok = PubSub.subscribe(user_topic(user_id))
 
       {:ok, socket}
     else
@@ -47,7 +47,7 @@ defmodule MyAppWeb.Admin.Account.ShowLive do
 
   @impl true
   def handle_info(
-        %{topic: "Teiserver.Connections.Client:" <> _, event: :client_updated} = msg,
+        %{topic: "MyApp.Account.User:" <> _, event: :client_updated} = msg,
         socket
       ) do
     new_client = socket.assigns.client |> Map.merge(msg.changes)
@@ -57,7 +57,7 @@ defmodule MyAppWeb.Admin.Account.ShowLive do
     |> noreply
   end
 
-  def handle_info(%{topic: "Teiserver.Connections.Client:" <> _}, socket) do
+  def handle_info(%{topic: "MyApp.Account.User:" <> _}, socket) do
     socket
     |> noreply()
   end
@@ -84,7 +84,7 @@ defmodule MyAppWeb.Admin.Account.ShowLive do
   defp get_user(%{assigns: %{user_id: user_id}} = socket) do
     user =
       try do
-        Teiserver.Account.get_user(user_id, preload: [:smurf_of])
+        MyApp.Account.get_user(user_id)
       rescue
         _ in Ecto.Query.CastError ->
           nil
@@ -97,16 +97,11 @@ defmodule MyAppWeb.Admin.Account.ShowLive do
   @spec get_other_data(Phoenix.Socket.t()) :: Phoenix.Socket.t()
   defp get_other_data(%{assigns: %{user: nil}} = socket) do
     socket
-    |> assign(:smurfs, [])
     |> assign(:tokens, [])
   end
 
   defp get_other_data(%{assigns: %{user: user}} = socket) do
     socket
-    |> assign(
-      :smurfs,
-      Teiserver.Account.list_users(where: [smurf_of: user.id], order_by: ["Last logged in"])
-    )
     |> assign(
       :tokens,
       MyApp.Account.list_user_tokens(where: [user_id: user.id], order_by: ["Most recently used"])

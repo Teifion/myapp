@@ -58,7 +58,7 @@ defmodule MyApp.MixProject do
       {:finch, "~> 0.13"},
       {:telemetry_metrics, "~> 1.0"},
       {:telemetry_poller, "~> 1.0"},
-      {:gettext, "~> 0.20"},
+      {:gettext, "~> 0.26.1"},
       {:jason, "~> 1.2"},
       {:plug_cowboy, "~> 2.5"},
 
@@ -71,7 +71,6 @@ defmodule MyApp.MixProject do
       {:fontawesome_icons, "~> 0.0.5"},
       {:cachex, "~> 3.6"},
       {:typedstruct, "~> 0.5.2", runtime: false},
-
       {:excoveralls, "~> 0.18.1", only: :test, runtime: false},
       {:credo, "~> 1.6", only: [:dev, :test], runtime: false}
     ]

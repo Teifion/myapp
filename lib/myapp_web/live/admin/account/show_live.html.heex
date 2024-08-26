@@ -4,7 +4,7 @@
     assigns[:edit_mode] == true and @user != nil and @user.id != nil -> "edit"
     true -> "new"
   end %>
-<MyAppWeb.Account.UserComponents.filter_bar selected={selected} />
+<MyAppWeb.UserComponents.filter_bar selected={selected} />
 
 <div :if={assigns[:edit_mode] != true} class="row mt-4">
   <div class="col">

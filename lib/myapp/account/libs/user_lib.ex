@@ -289,6 +289,7 @@ defmodule MyApp.Account.UserLib do
   @spec register_failed_login(User.id(), String.t() | nil, String.t() | atom) :: :ok
   def register_failed_login(_, _, :rate_limit), do: :ok
   def register_failed_login(nil, _, _), do: :ok
+
   def register_failed_login(user_id, ip, reason) do
     Cachex.incr(:ts_login_count_ip, ip)
     Cachex.incr(:ts_login_count_user, user_id)
@@ -325,6 +326,7 @@ defmodule MyApp.Account.UserLib do
 
   @spec allow_ip_login_attempt?(String.t()) :: boolean
   defp allow_ip_login_attempt?(nil), do: true
+
   defp allow_ip_login_attempt?(ip) do
     max_allowed_ip = 3
     # TODO: Call out to get the maximum number of IP attempts

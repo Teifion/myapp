@@ -1,13 +1,7 @@
 defmodule MyAppWeb.UserComponents do
   @moduledoc false
-  use Phoenix.Component
-  # alias Phoenix.LiveView.JS
-  # import MyAppWeb.Gettext
-
-  use Phoenix.VerifiedRoutes,
-    endpoint: MyAppWeb.Endpoint,
-    router: MyAppWeb.Router,
-    statics: MyAppWeb.static_paths()
+  use MyAppWeb, :component
+  import MyAppWeb.{NavComponents}
 
   @doc """
   <MyAppWeb.UserComponents.filter_bar active="active" />

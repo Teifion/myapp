@@ -71,17 +71,9 @@ defmodule MyAppWeb.NavComponents do
                 route={~p"/admin/accounts"}
               />
 
-              <.top_nav_item text="Games" active={@active == "game"} route={~p"/admin/game"} />
+              <.top_nav_item text="Games" active={@active == "game"} route={~p"/"} />
 
-              <.top_nav_item text="Logging" active={@active == "logging"} route={~p"/admin/logging"} />
-
-              <.top_nav_item
-                text="Settings"
-                active={@active == "settings"}
-                route={~p"/admin/settings"}
-              />
-
-              <.top_nav_item text="Data export" active={@active == "data"} route={~p"/admin/data"} />
+              <.top_nav_item text="Logging" active={@active == "logging"} route={~p"/"} />
             <% end %>
           </ul>
           <!-- Left links -->

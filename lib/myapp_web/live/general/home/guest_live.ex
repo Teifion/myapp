@@ -19,11 +19,12 @@ defmodule MyAppWeb.General.HomeLive.Guest do
   def handle_event("guest-account", _, socket) do
     name = MyApp.Account.generate_guest_name()
 
-    {:ok, user} = MyApp.Account.create_user(%{
-      "name" => name,
-      "email" => "#{String.replace(name, " ", "")}@somedomain",
-      "password" => MyApp.Account.generate_password()
-    })
+    {:ok, user} =
+      MyApp.Account.create_user(%{
+        "name" => name,
+        "email" => "#{String.replace(name, " ", "")}@somedomain",
+        "password" => MyApp.Account.generate_password()
+      })
 
     user_agent = socket.assigns.user_agent
     ip = socket.assigns.address |> Tuple.to_list() |> Enum.join(".")
