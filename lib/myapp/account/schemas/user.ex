@@ -32,7 +32,7 @@ defmodule MyApp.Account.User do
 
     has_many :tokens, MyApp.Account.UserToken
 
-    timestamps()
+    timestamps(type: :utc_datetime)
   end
 
   @type id :: Ecto.UUID.t()

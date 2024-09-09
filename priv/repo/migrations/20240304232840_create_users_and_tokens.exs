@@ -11,7 +11,7 @@ defmodule MyApp.Repo.Migrations.CreateUsersAndTokens do
       add(:groups, {:array, :string})
       add(:permissions, {:array, :string})
 
-      timestamps()
+      timestamps(type: :utc_datetime)
     end
 
     execute "CREATE INDEX IF NOT EXISTS lower_username ON account_users (LOWER(name))"
@@ -32,7 +32,7 @@ defmodule MyApp.Repo.Migrations.CreateUsersAndTokens do
       add :expires_at, :utc_datetime
       add :last_used_at, :utc_datetime
 
-      timestamps()
+      timestamps(type: :utc_datetime)
     end
 
     create index(:account_user_tokens, [:identifier_code])

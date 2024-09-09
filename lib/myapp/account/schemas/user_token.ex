@@ -25,7 +25,7 @@ defmodule MyApp.Account.UserToken do
     field(:expires_at, :utc_datetime)
     field(:last_used_at, :utc_datetime)
 
-    timestamps()
+    timestamps(type: :utc_datetime)
   end
 
   @type id :: Ecto.UUID.t()

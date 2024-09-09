@@ -64,11 +64,10 @@ defmodule MyApp.MixProject do
 
       # Extra deps
       {:ecto_psql_extras, "~> 0.7"},
-      {:timex, "~> 3.7.5"},
       {:argon2_elixir, "~> 4.0"},
       {:phoenix_pubsub, "~> 2.0"},
       {:dart_sass, "~> 0.6"},
-      {:fontawesome_icons, "~> 0.0.5"},
+      {:fontawesome_icons, "~> 0.0.6"},
       {:cachex, "~> 3.6"},
       {:typedstruct, "~> 0.5.2", runtime: false},
       {:excoveralls, "~> 0.18.1", only: :test, runtime: false},
