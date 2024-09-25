@@ -5,7 +5,7 @@ defmodule MyAppWeb.CoreComponents do
 
   use Phoenix.Component
   alias Phoenix.LiveView.JS
-  import MyAppWeb.Gettext
+  use Gettext, backend: MyApp.Gettext
   alias Fontawesome
 
   @doc """

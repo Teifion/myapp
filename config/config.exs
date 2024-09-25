@@ -13,6 +13,7 @@ config :myapp,
 # Configures the endpoint
 config :myapp, MyAppWeb.Endpoint,
   url: [host: "localhost"],
+  adapter: Bandit.PhoenixAdapter,
   render_errors: [
     formats: [html: MyAppWeb.ErrorHTML, json: MyAppWeb.ErrorJSON],
     layout: false
