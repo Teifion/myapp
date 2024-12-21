@@ -578,6 +578,8 @@ defmodule MyAppWeb.CoreComponents do
   attr :true, :string, default: "check"
   attr :false, :string, default: "times"
   attr :coloured, :boolean, default: true
+  attr :coloured_true, :string, default: "text-success"
+  attr :coloured_false, :string, default: "text-danger"
   attr :rest, :global, doc: "arbitrary items to pass to Fontawesome.icon"
   def boolean_icon(%{value: false, false: ""} = assigns), do: ~H""
   def boolean_icon(%{value: false, false: nil} = assigns), do: ~H""
@@ -585,7 +587,7 @@ defmodule MyAppWeb.CoreComponents do
   def boolean_icon(%{value: true, true: nil} = assigns), do: ~H""
   def boolean_icon(assigns) do
     colour_class = if assigns[:coloured] do
-      if assigns[:value], do: " text-success", else: " text-danger"
+      if assigns[:value], do: assigns[:coloured_true], else: assigns[:coloured_false]
     end
 
     assigns = assigns
