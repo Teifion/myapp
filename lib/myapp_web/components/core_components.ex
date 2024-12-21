@@ -569,6 +569,34 @@ defmodule MyAppWeb.CoreComponents do
   end
 
   @doc """
+  Renders an icon if true vs false
+  ## Examples
+
+  <.boolean_icon value={some_bool} true="check" false="times" coloured={true} />
+  """
+  attr :value, :boolean, required: true
+  attr :true, :string, default: "check"
+  attr :false, :string, default: "times"
+  attr :coloured, :boolean, default: true
+  attr :rest, :global, doc: "arbitrary items to pass to Fontawesome.icon"
+  def boolean_icon(%{value: false, false: ""} = assigns), do: ~H""
+  def boolean_icon(%{value: false, false: nil} = assigns), do: ~H""
+  def boolean_icon(%{value: true, true: ""} = assigns), do: ~H""
+  def boolean_icon(%{value: true, true: nil} = assigns), do: ~H""
+  def boolean_icon(assigns) do
+    colour_class = if assigns[:coloured] do
+      if assigns[:value], do: " text-success", else: " text-danger"
+    end
+
+    assigns = assigns
+      |> assign(:colour_class, colour_class)
+
+    ~H"""
+    <Fontawesome.icon icon={if @value == true, do: assigns[:true], else: assigns[:false]} style={@rest[:style] || "regular"} class={[@rest[:style] || "", @colour_class]} />
+    """
+  end
+
+  @doc """
   Translates an error message using gettext.
   """
   def translate_error({msg, opts}) do
