@@ -45,7 +45,7 @@ defmodule MyAppWeb.CoreComponents do
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <%= render_slot(@title) %>
+            {render_slot(@title)}
             <button
               type="button"
               class="btn-close"
@@ -57,11 +57,11 @@ defmodule MyAppWeb.CoreComponents do
           </div>
 
           <div class="modal-body">
-            <%= render_slot(@body) %>
+            {render_slot(@body)}
           </div>
 
           <div :if={not Enum.empty?(@footer)} class="modal-footer">
-            <%= render_slot(@footer) %>
+            {render_slot(@footer)}
           </div>
         </div>
       </div>
@@ -128,7 +128,7 @@ defmodule MyAppWeb.CoreComponents do
         </button>
       </div>
       <div class="toast-body">
-        <%= msg %>
+        {msg}
       </div>
     </div>
     """
@@ -190,9 +190,9 @@ defmodule MyAppWeb.CoreComponents do
     ~H"""
     <.form :let={f} for={@for} as={@as} {@rest}>
       <div class="">
-        <%= render_slot(@inner_block, f) %>
+        {render_slot(@inner_block, f)}
         <div :for={action <- @actions} class="mt-2 flex items-center justify-between gap-6">
-          <%= render_slot(action, f) %>
+          {render_slot(action, f)}
         </div>
       </div>
     </.form>
@@ -220,7 +220,7 @@ defmodule MyAppWeb.CoreComponents do
       ]}
       {@rest}
     >
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </button>
     """
   end
@@ -242,7 +242,7 @@ defmodule MyAppWeb.CoreComponents do
   attr :type, :string,
     default: "text",
     values: ~w(checkbox color date datetime-local email file hidden month number password
-               range radio search select tel text textarea time url week)
+               range radio search select tel text textarea time url week 3dvector)
 
   attr :field, Phoenix.HTML.FormField,
     doc: "a form field struct retrieved from the form, for example: @form[:email]"
@@ -252,14 +252,18 @@ defmodule MyAppWeb.CoreComponents do
   attr :prompt, :string, default: nil, doc: "the prompt for select inputs"
   attr :options, :list, doc: "the options to pass to Phoenix.HTML.Form.options_for_select/2"
   attr :multiple, :boolean, default: false, doc: "the multiple flag for select inputs"
-  attr :rest, :global, include: ~w(autocomplete cols disabled form max maxlength min minlength
-                                   pattern placeholder readonly required rows size step)
+
+  attr :rest, :global,
+    include:
+      ~w(autocomplete cols disabled form max maxlength min minlength
+                                   pattern placeholder readonly required rows size step show_valid valid_inset)
+
   slot :inner_block
 
   def input(%{field: %Phoenix.HTML.FormField{} = field} = assigns) do
     assigns
     |> assign(field: nil, id: assigns.id || field.id)
-    |> assign(:errors, Enum.map(field.errors, &translate_error(&1)))
+    |> assign(:errors, assigns[:errors] ++ Enum.map(field.errors, &translate_error(&1)))
     |> assign_new(:name, fn -> if assigns.multiple, do: field.name <> "[]", else: field.name end)
     |> assign_new(:value, fn -> field.value end)
     |> input()
@@ -282,9 +286,9 @@ defmodule MyAppWeb.CoreComponents do
         {@rest}
       />
       <label class="form-check-label" for={@id}>
-        <strong><%= @label %></strong><%= assigns[:text] %>
+        <strong>{@label}</strong>{assigns[:text]}
         <%= if assigns[:description] do %>
-          &nbsp;<%= assigns[:description] %>
+          &nbsp;{assigns[:description]}
         <% end %>
       </label>
     </div>
@@ -294,12 +298,12 @@ defmodule MyAppWeb.CoreComponents do
   def input(%{type: "select"} = assigns) do
     ~H"""
     <div phx-feedback-for={@name}>
-      <.label :if={@label} for={@id}><%= @label %></.label>
+      <.label :if={@label} for={@id}>{@label}</.label>
       <select id={@id} name={@name} class="form-control" multiple={@multiple} {@rest}>
-        <option :if={@prompt} value=""><%= @prompt %></option>
-        <%= Phoenix.HTML.Form.options_for_select(@options, @value) %>
+        <option :if={@prompt} value="">{@prompt}</option>
+        {Phoenix.HTML.Form.options_for_select(@options, @value)}
       </select>
-      <.error :for={msg <- @errors}><%= msg %></.error>
+      <.error :for={msg <- @errors}>{msg}</.error>
     </div>
     """
   end
@@ -307,7 +311,7 @@ defmodule MyAppWeb.CoreComponents do
   def input(%{type: "textarea"} = assigns) do
     ~H"""
     <div phx-feedback-for={@name}>
-      <.label :if={@label} for={@id}><%= @label %></.label>
+      <.label :if={@label} for={@id}>{@label}</.label>
       <br />
       <textarea
         id={@id || @name}
@@ -319,27 +323,84 @@ defmodule MyAppWeb.CoreComponents do
         ]}
         {@rest}
       ><%= Phoenix.HTML.Form.normalize_value("textarea", @value) %></textarea>
-      <.error :for={msg <- @errors}><%= msg %></.error>
+      <.error :for={msg <- @errors}>{msg}</.error>
     </div>
     """
   end
 
-  def input(assigns) do
+  def input(%{type: "3dvector"} = assigns) do
     ~H"""
     <div phx-feedback-for={@name}>
-      <.label :if={@label} for={@id}><%= @label %></.label>
+      <.label :if={@label} for={@id}>{@label}</.label>
       <input
+        :for={{v, idx} <- Enum.with_index(@value || assigns[:value])}
         type={@type}
-        name={@name}
-        id={@id || @name}
-        value={Phoenix.HTML.Form.normalize_value(@type, @value)}
+        name={"#{@name}[]"}
+        id={@id || "#{@name}_#{idx}"}
+        value={v}
+        style="width: 80px;"
         class={[
-          "form-control",
+          "form-control d-inline-block",
           @errors != [] && "border-danger"
         ]}
         {@rest}
       />
-      <.error :for={msg <- @errors}><%= msg %></.error>
+      <.error :for={msg <- @errors}>{msg}</.error>
+    </div>
+    """
+  end
+
+  def input(%{type: "hidden"} = assigns) do
+    ~H"""
+    <input
+      type="hidden"
+      name={@name}
+      id={@id || @name}
+      value={Phoenix.HTML.Form.normalize_value(@type, @value)}
+      {@rest}
+    />
+    """
+  end
+
+  def input(assigns) do
+    show_valid = assigns[:errors] == [] && assigns[:rest][:show_valid] && assigns[:value] != nil
+
+    assigns =
+      assigns
+      |> assign(:show_valid, show_valid)
+
+    ~H"""
+    <div phx-feedback-for={@name}>
+      <.label :if={@label} for={@id}>{@label}</.label>
+      <div class="input-group">
+        <input
+          type={@type}
+          name={@name}
+          id={@id || @name}
+          value={Phoenix.HTML.Form.normalize_value(@type, @value)}
+          class={[
+            "form-control",
+            @show_valid && "border-success",
+            @errors != [] && "border-danger"
+          ]}
+          {@rest}
+        />
+        <span
+          :if={assigns[:rest][:valid_inset]}
+          class={[
+            "input-group-text text-white",
+            @show_valid && "bg-success border-success2",
+            @errors != [] && "bg-danger border-danger2"
+          ]}
+        >
+          <Fontawesome.icon :if={@show_valid} icon="check-circle" />
+          <Fontawesome.icon :if={@errors != []} icon="times-circle" />
+          <span :if={!@show_valid && @errors == []}>
+            <Fontawesome.icon icon="square" style="regular" class="opacity-0" />
+          </span>
+        </span>
+      </div>
+      <.error :for={msg <- @errors}>{msg}</.error>
     </div>
     """
   end
@@ -353,7 +414,7 @@ defmodule MyAppWeb.CoreComponents do
   def label(assigns) do
     ~H"""
     <label for={@for} class="control-label">
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </label>
     """
   end
@@ -367,7 +428,7 @@ defmodule MyAppWeb.CoreComponents do
     ~H"""
     <p class="phx-no-feedback:hidden mt-3 flex gap-3 text-sm leading-6 text-danger">
       <Fontawesome.icon icon="circle-exclamation" style="regular" />
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </p>
     """
   end
@@ -385,13 +446,13 @@ defmodule MyAppWeb.CoreComponents do
     <header class={[@actions != [] && "flex items-center justify-between gap-6", @class]}>
       <div>
         <h1 class="text-lg font-semibold leading-8 text-zinc-800">
-          <%= render_slot(@inner_block) %>
+          {render_slot(@inner_block)}
         </h1>
         <p :if={@subtitle != []} class="mt-2 text-sm leading-6 text-zinc-600">
-          <%= render_slot(@subtitle) %>
+          {render_slot(@subtitle)}
         </p>
       </div>
-      <div class="flex-none"><%= render_slot(@actions) %></div>
+      <div class="flex-none">{render_slot(@actions)}</div>
     </header>
     """
   end
@@ -441,9 +502,9 @@ defmodule MyAppWeb.CoreComponents do
       <table class={"table #{@table_class}"}>
         <thead class="">
           <tr>
-            <th :for={col <- @col} class=""><%= col[:label] %></th>
+            <th :for={col <- @col} class="">{col[:label]}</th>
             <th :if={@action != []} colspan={Enum.count(@action)}>
-              <span class="visually-hidden"><%= gettext("Actions") %></span>
+              <span class="visually-hidden">{gettext("Actions")}</span>
             </th>
           </tr>
         </thead>
@@ -459,12 +520,12 @@ defmodule MyAppWeb.CoreComponents do
             class={@row_class && @row_class.(row)}
           >
             <td :for={{col, _i} <- Enum.with_index(@col)} class={["", @row_click && "cursor-pointer"]}>
-              <%= render_slot(col, @row_item.(row)) %>
+              {render_slot(col, @row_item.(row))}
             </td>
             <td :if={@action != []}>
               <div class="">
                 <span :for={action <- @action} class="">
-                  <%= render_slot(action, @row_item.(row)) %>
+                  {render_slot(action, @row_item.(row))}
                 </span>
               </div>
             </td>
@@ -492,8 +553,8 @@ defmodule MyAppWeb.CoreComponents do
     <div class="mt-14">
       <dl class="-my-4 divide-y divide-zinc-100">
         <div :for={item <- @item} class="flex gap-4 py-4 sm:gap-8">
-          <dt class="w-1/4 flex-none text-[0.8125rem] leading-6 text-zinc-500"><%= item.title %></dt>
-          <dd class="text-sm leading-6 text-zinc-700"><%= render_slot(item) %></dd>
+          <dt class="w-1/4 flex-none text-[0.8125rem] leading-6 text-zinc-500">{item.title}</dt>
+          <dd class="text-sm leading-6 text-zinc-700">{render_slot(item)}</dd>
         </div>
       </dl>
     </div>
@@ -516,7 +577,7 @@ defmodule MyAppWeb.CoreComponents do
         class="text-sm font-semibold leading-6 text-zinc-900 hover:text-zinc-700"
       >
         <Fontawesome.icon icon="arrow-left" style="regular" />
-        <%= render_slot(@inner_block) %>
+        {render_slot(@inner_block)}
       </.link>
     </div>
     """
@@ -575,8 +636,8 @@ defmodule MyAppWeb.CoreComponents do
   <.boolean_icon value={some_bool} true="check" false="times" coloured={true} />
   """
   attr :value, :boolean, required: true
-  attr :true, :string, default: "check"
-  attr :false, :string, default: "times"
+  attr true, :string, default: "check"
+  attr false, :string, default: "times"
   attr :coloured, :boolean, default: true
   attr :coloured_true, :string, default: "text-success"
   attr :coloured_false, :string, default: "text-danger"
@@ -585,16 +646,23 @@ defmodule MyAppWeb.CoreComponents do
   def boolean_icon(%{value: false, false: nil} = assigns), do: ~H""
   def boolean_icon(%{value: true, true: ""} = assigns), do: ~H""
   def boolean_icon(%{value: true, true: nil} = assigns), do: ~H""
-  def boolean_icon(assigns) do
-    colour_class = if assigns[:coloured] do
-      if assigns[:value], do: assigns[:coloured_true], else: assigns[:coloured_false]
-    end
 
-    assigns = assigns
+  def boolean_icon(assigns) do
+    colour_class =
+      if assigns[:coloured] do
+        if assigns[:value], do: assigns[:coloured_true], else: assigns[:coloured_false]
+      end
+
+    assigns =
+      assigns
       |> assign(:colour_class, colour_class)
 
     ~H"""
-    <Fontawesome.icon icon={if @value == true, do: assigns[:true], else: assigns[:false]} style={@rest[:style] || "regular"} class={[@rest[:style] || "", @colour_class]} />
+    <Fontawesome.icon
+      icon={if @value == true, do: assigns[true], else: assigns[false]}
+      style={@rest[:style] || "regular"}
+      class={"#{@rest[:style] || ""} #{@colour_class}"}
+    />
     """
   end
 
@@ -620,9 +688,9 @@ defmodule MyAppWeb.CoreComponents do
     # should be written to the errors.po file. The :count option is
     # set by Ecto and indicates we should also apply plural rules.
     if count = opts[:count] do
-      Gettext.dngettext(MyAppWeb.Gettext, "errors", msg, msg, count, opts)
+      Gettext.dngettext(MyApp.Gettext, "errors", msg, msg, count, opts)
     else
-      Gettext.dgettext(MyAppWeb.Gettext, "errors", msg, opts)
+      Gettext.dgettext(MyApp.Gettext, "errors", msg, opts)
     end
   end
 

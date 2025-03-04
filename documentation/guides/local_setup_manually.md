@@ -1,5 +1,4 @@
-# Local setup
-This is a guide for developing MyApp locally. If you are just deploying MyApp then you likely will not need this guide. MyApp is a [Phoenix](https://www.phoenixframework.org/) project with a few extra steps. This guide is primarily aimed at those who are new to Elixir/Phoenix.
+# Local dev manual
 
 ## Install services
 You will need to install:
@@ -10,7 +9,7 @@ I prefer using [asdf](https://github.com/asdf-vm/asdf) and have included a `.too
 
 ## Clone repo and pull dependencies
 ```bash
-git clone git@github.com:Teifion/MyApp.git
+git clone git@github.com:myapp/myapp.git
 cd myapp
 mix deps.get && mix deps.compile
 ```
@@ -52,36 +51,31 @@ iex -S mix phx.server
 
 If all goes to plan you should be able to access your site locally at [http://localhost:4000/](http://localhost:4000/).
 
+# Stuff for 
 ### Libraries you need to get yourself
-The site makes liberal use of [FontAwesome](https://fontawesome.com/) so if you are using the site you'll need to download it and do the following
+The site makes use of [FontAwesome](https://fontawesome.com/) so if you are using the site you'll need to download the free version and do the following.
+
+Note: Ensure you download the Web version, not the desktop version.
 ```bash
 fontawesome/css/all.css -> priv/static/css/fontawesome.css
 fontawesome/webfonts -> priv/static/webfonts
 ```
 
-## Connecting to the your server locally
-```bash
-openssl s_client -connect localhost:8201
-```
-
-### config/dev.secret.exs
-If you want to do things like have a discord bot in development you don't want these details going into git. You can create a file `config/dev.secret.exs` where you can put these config details; the file must act like any other config file though is already ignored by gitignore.
-
 ## Creating your admin account
 ```elixir
-MyApp.Account.create_user(%{
+myapp.Account.create_user(%{
   name: "root",
   email: "root@localhost",
   password: "password",
-  groups: ["admin"],
+  groups: ["admin"], 
   permissions: ["admin"]
 })
 ```
 
 Editing it if you change something later
 ```elixir
-user = MyApp.Account.get_user_by_email("root@localhost")
-MyApp.Account.update_user(user, %{
+user = myapp.Account.get_user_by_email("root@localhost")
+myapp.Account.update_user(user, %{
   groups: ["admin"],
   permissions: ["admin"]
 })
@@ -93,6 +87,6 @@ When running locally it's likely you won't want to connect the server to an emai
 Run your server with `iex -S mix phx.server` and then once it has started up use the following code to update your password.
 
 ```elixir
-user = MyApp.Account.get_user_by_email("root@localhost")
-MyApp.Account.update_user(user, %{"password" => "your password here"})
+user = myapp.Account.get_user_by_email("root@localhost")
+myapp.Account.update_user(user, %{"password" => "your password here"})
 ```

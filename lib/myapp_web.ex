@@ -96,7 +96,6 @@ defmodule MyAppWeb do
       import MyAppWeb.CoreComponents
 
       alias MyApp.Helper.StylingHelper
-      import MyApp.Helper.StringHelper, only: [format_number: 1]
       unquote(html_helpers())
     end
   end
@@ -105,9 +104,20 @@ defmodule MyAppWeb do
     quote do
       use Phoenix.LiveComponent
 
-      alias MyApp.Helper.StylingHelper
-      import MyApp.Helper.StringHelper, only: [format_number: 1]
+      import MyApp.Account.AuthLib,
+        only: [
+          allow?: 2,
+          allow_any?: 2,
+          allow_all?: 2,
+          mount_require_all: 2,
+          mount_require_any: 2
+        ]
 
+      alias MyApp.Helper.StylingHelper
+
+      defguard is_connected?(socket) when socket.transport_pid != nil
+      def ok(socket), do: {:ok, socket}
+      def noreply(socket), do: {:noreply, socket}
       unquote(html_helpers())
     end
   end
@@ -135,6 +145,9 @@ defmodule MyAppWeb do
 
       # Shortcut for generating JS commands
       alias Phoenix.LiveView.JS
+
+      alias MyApp.Helper.StylingHelper
+      import MyApp.Helper.StringHelper, only: [format_number: 1, format_vector: 1]
 
       # Routes generation with the ~p sigil
       unquote(verified_routes())
