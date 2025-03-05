@@ -65,29 +65,6 @@ defmodule MyAppWeb.Router do
     end
   end
 
-  scope "/play", MyAppWeb.Play do
-    pipe_through [:browser]
-
-    live_session :play_index,
-      on_mount: [
-        {MyAppWeb.UserAuth, :ensure_authenticated}
-      ] do
-      live "/new", NewLive.Index, :index
-      live "/find", FindLive.Index, :index
-      live "/find/:game_id", FindLive.Index, :game
-    end
-
-    live_session :play_in_game,
-      on_mount: [
-        {MyAppWeb.UserAuth, :ensure_authenticated}
-      ] do
-      live "/ward/:game_id", WardLive.Index, :index
-      live "/patients/:game_id", PatientsLive.Index, :index
-      live "/desk/:game_id", DeskLive.Index, :index
-      live "/job/:game_id/:job_id", JobLive.Index, :index
-    end
-  end
-
   scope "/", MyAppWeb do
     pipe_through [:browser, :redirect_if_user_is_authenticated]
 

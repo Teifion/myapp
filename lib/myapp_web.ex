@@ -147,7 +147,7 @@ defmodule MyAppWeb do
       alias Phoenix.LiveView.JS
 
       alias MyApp.Helper.StylingHelper
-      import MyApp.Helper.StringHelper, only: [format_number: 1, format_vector: 1]
+      import MyApp.Helper.StringHelper, only: [format_number: 1]
 
       # Routes generation with the ~p sigil
       unquote(verified_routes())

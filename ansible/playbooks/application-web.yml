@@ -5,5 +5,5 @@
     - debian
     - letsencrypt
     - nginx
-    - myapp
+    - elixir_app
   

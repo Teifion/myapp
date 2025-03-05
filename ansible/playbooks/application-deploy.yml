@@ -2,5 +2,5 @@
   hosts:
     - web
   roles:
-    - myapp_deploy
+    - elixir_app_deploy
   

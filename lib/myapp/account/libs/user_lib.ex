@@ -332,14 +332,14 @@ defmodule MyApp.Account.UserLib do
     # TODO: Call out to get the maximum number of IP attempts
     # max_allowed_ip = MyApp.get_server_setting_value("login.ip_rate_limit")
 
-    if max_allowed_ip == nil do
-      true
-    else
-      current_ip_count = Cachex.fetch!(:login_count_ip, ip, fn -> 0 end)
+    # if max_allowed_ip == nil do
+    #   true
+    # else
+    current_ip_count = Cachex.fetch!(:login_count_ip, ip, fn -> 0 end)
 
-      # As long as we're below the max it's okay
-      current_ip_count <= max_allowed_ip
-    end
+    # As long as we're below the max it's okay
+    current_ip_count <= max_allowed_ip
+    # end
   end
 
   @spec allow_user_login_attempt?(User.id()) :: boolean
