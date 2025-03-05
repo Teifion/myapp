@@ -34,10 +34,10 @@
     cache_valid_time: 600
   when: not postgres_data.stat.exists
 
-- name: Install postgres-16
+- name: Install postgres-17
   apt:
     pkg:
-      - postgresql-16
+      - postgresql-17
     state: latest
   when: not postgres_data.stat.exists
   
@@ -55,7 +55,7 @@
 
 - name: "Allow local connections"
   community.postgresql.postgresql_pg_hba:
-    dest: "/etc/postgresql/16/main/pg_hba.conf"
+    dest: "/etc/postgresql/17/main/pg_hba.conf"
     contype: local
     databases: all
     method: trust
@@ -64,7 +64,7 @@
   
 - name: "Allow IP4 connections"
   community.postgresql.postgresql_pg_hba:
-    dest: "/etc/postgresql/16/main/pg_hba.conf"
+    dest: "/etc/postgresql/17/main/pg_hba.conf"
     contype: host
     databases: all
     source: 0.0.0.0/0
@@ -74,7 +74,7 @@
   
 - name: "Allow IP6 connections"
   community.postgresql.postgresql_pg_hba:
-    dest: "/etc/postgresql/16/main/pg_hba.conf"
+    dest: "/etc/postgresql/17/main/pg_hba.conf"
     contype: host
     databases: all
     source: ::/0
