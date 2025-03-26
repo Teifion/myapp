@@ -84,6 +84,7 @@ defmodule MyAppWeb.Router do
     pipe_through [:browser]
 
     delete "/logout", UserSessionController, :delete
+    post "/logout", UserSessionController, :delete
 
     live_session :current_user,
       on_mount: [{MyAppWeb.UserAuth, :mount_current_user}] do

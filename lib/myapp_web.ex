@@ -43,7 +43,7 @@ defmodule MyAppWeb do
         layouts: [html: MyAppWeb.Layouts]
 
       import Plug.Conn
-      use Gettext, backend: MyApp.Gettext
+      use Gettext, backend: MyAppWeb.Gettext
 
       unquote(verified_routes())
     end
@@ -141,7 +141,7 @@ defmodule MyAppWeb do
       import Phoenix.HTML
       # Core UI components and translation
       import MyAppWeb.{CoreComponents, NavComponents, BootstrapComponents}
-      use Gettext, backend: MyApp.Gettext
+      use Gettext, backend: MyAppWeb.Gettext
 
       # Shortcut for generating JS commands
       alias Phoenix.LiveView.JS

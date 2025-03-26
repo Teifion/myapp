@@ -1,11 +1,11 @@
-defmodule MyApp.Gettext do
+defmodule MyAppWeb.Gettext do
   @moduledoc """
   A module providing Internationalization with a gettext-based API.
 
   By using [Gettext](https://hexdocs.pm/gettext),
   your module gains a set of macros for translations, for example:
 
-      use Gettext, backend: MyApp.Gettext
+      use Gettext, backend: MyAppWeb.Gettext
 
       # Simple translation
       gettext("Here is the string to translate")

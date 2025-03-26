@@ -9,14 +9,14 @@ defmodule MyApp.Application do
   @impl true
   def start(_type, _args) do
     children = [
-      {Ecto.Migrator,
-       repos: Application.fetch_env!(:myapp, :ecto_repos),
-       skip: System.get_env("SKIP_MIGRATIONS") == "true"},
-
       # Start the Telemetry supervisor
       MyApp.TelemetrySupervisor,
       # Start the Ecto repository
       MyApp.Repo,
+      {Ecto.Migrator,
+       repos: Application.fetch_env!(:myapp, :ecto_repos),
+       skip: System.get_env("SKIP_MIGRATIONS") == "true"},
+
       # Start the PubSub system
       {Phoenix.PubSub, name: MyApp.PubSub},
       # Start Finch

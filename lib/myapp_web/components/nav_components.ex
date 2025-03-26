@@ -30,7 +30,7 @@ defmodule MyAppWeb.NavComponents do
         <%= if assigns[:icon] do %>
           <i class={"fa-fw #{@icon}"}></i>
         <% end %>
-        <%= @text %>
+        {@text}
       </a>
     </li>
     """
@@ -70,10 +70,6 @@ defmodule MyAppWeb.NavComponents do
                 active={@active == "account"}
                 route={~p"/admin/accounts"}
               />
-
-              <.top_nav_item text="Games" active={@active == "game"} route={~p"/"} />
-
-              <.top_nav_item text="Logging" active={@active == "logging"} route={~p"/"} />
             <% end %>
           </ul>
           <!-- Left links -->
@@ -83,7 +79,6 @@ defmodule MyAppWeb.NavComponents do
         <!-- Right elements -->
         <div class="d-flex align-items-center">
           <%= if @current_user do %>
-            <MyAppWeb.NavComponents.recents_dropdown current_user={@current_user} />
             <MyAppWeb.NavComponents.account_dropdown current_user={@current_user} />
           <% else %>
             <a class="nav-link" href={~p"/login"}>
@@ -110,7 +105,7 @@ defmodule MyAppWeb.NavComponents do
   def tab_header(assigns) do
     ~H"""
     <ul class="nav nav-tabs" role="tablist">
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </ul>
     """
   end
@@ -127,7 +122,7 @@ defmodule MyAppWeb.NavComponents do
     ~H"""
     <li class="nav-item">
       <.link patch={@url} class={"nav-link #{@active_class}"}>
-        <%= render_slot(@inner_block) %>
+        {render_slot(@inner_block)}
       </.link>
     </li>
     """
@@ -191,7 +186,7 @@ defmodule MyAppWeb.NavComponents do
     <div class={"#{@col_classes} menu-card #{@extra_classes}"} {@dynamic_attrs}>
       <a href={@url} class="block-link" style={@style}>
         <Fontawesome.icon icon={@icon} style={@icon_class} size={@icon_size} /><br />
-        <%= render_slot(@inner_block) %>
+        {render_slot(@inner_block)}
       </a>
     </div>
     """
@@ -222,7 +217,7 @@ defmodule MyAppWeb.NavComponents do
           style={if @active, do: "solid", else: "regular"}
           size="2x"
         /><br />
-        <%= render_slot(@inner_block) %>
+        {render_slot(@inner_block)}
       </a>
     </div>
     """
@@ -247,7 +242,7 @@ defmodule MyAppWeb.NavComponents do
     ~H"""
     <div class={"btn btn-outline-#{@colour} #{@active_class}"} {@rest}>
       <Fontawesome.icon :if={@icon} icon={@icon} style={if @active, do: "solid", else: "regular"} />
-      &nbsp; <%= render_slot(@inner_block) %>
+      &nbsp; {render_slot(@inner_block)}
     </div>
     """
   end
@@ -272,7 +267,7 @@ defmodule MyAppWeb.NavComponents do
     ~H"""
     <.link navigate={@url} class={"btn btn-outline-#{@colour} #{@active_class}"} {@rest}>
       <Fontawesome.icon :if={@icon} icon={@icon} style={if @active, do: "solid", else: "regular"} />
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </.link>
     """
   end
@@ -306,7 +301,7 @@ defmodule MyAppWeb.NavComponents do
     ~H"""
     <.link patch={@url} class={"btn btn-outline-#{@colour} #{@active_class}"} {@rest}>
       <Fontawesome.icon :if={@icon} icon={@icon} style={if @active, do: "solid", else: "regular"} />
-      <%= render_slot(@inner_block) %>
+      {render_slot(@inner_block)}
     </.link>
     """
   end
@@ -324,11 +319,11 @@ defmodule MyAppWeb.NavComponents do
               <%= for breadcrumb <- breadcrumb_trail do %>
                 <%= if breadcrumb[:url] == "#" do %>
                   <li class="breadcrumb-item active" aria-current="page">
-                    <a href={breadcrumb[:url]}><%= breadcrumb[:name] %></a>
+                    <a href={breadcrumb[:url]}>{breadcrumb[:name]}</a>
                   </li>
                 <% else %>
                   <li class="breadcrumb-item">
-                    <a href={breadcrumb[:url]}><%= breadcrumb[:name] %></a>
+                    <a href={breadcrumb[:url]}>{breadcrumb[:name]}</a>
                   </li>
                 <% end %>
               <% end %>
@@ -338,64 +333,11 @@ defmodule MyAppWeb.NavComponents do
 
         <%= if assigns[:breadcrumb_extra] do %>
           <div id="breadcrumb-right">
-            <%= assigns[:breadcrumb_extra] %>
+            {assigns[:breadcrumb_extra]}
           </div>
         <% end %>
       </div>
     </nav>
-    """
-  end
-
-  @doc """
-  <MyAppWeb.NavComponents.recents_dropdown current_user={@current_user} />
-  """
-  attr :current_user, :map, required: true
-
-  def recents_dropdown(assigns) do
-    # recents =
-    #   assigns[:current_user]
-    #   |> MyApp.Account.RecentlyUsedCache.get_recently()
-    #   |> Enum.take(15)
-
-    recents = []
-
-    assigns =
-      assigns
-      |> assign(recents: recents)
-
-    ~H"""
-    <div :if={not Enum.empty?(@recents)} class="nav-item dropdown mx-2">
-      <a
-        class="dropdown-toggle dropdown-toggle-icon-only"
-        href="#"
-        data-bs-toggle="dropdown"
-        aria-haspopup="true"
-        aria-expanded="false"
-        id="user-recents-link"
-      >
-        <i class="fa-solid fa-clock fa-fw fa-lg"></i>
-      </a>
-      <div
-        class="dropdown-menu dropdown-menu-end"
-        aria-labelledby="user-recents-link"
-        style="min-width: 300px; max-width: 500px;"
-      >
-        <span class="dropdown-header" style="font-weight: bold;">
-          Recent items
-        </span>
-
-        <a :for={r <- @recents} class="dropdown-item" href={r.url}>
-          <Fontawesome.icon icon={r.type_icon} style="regular" css={"color: #{r.type_colour}"} />
-
-          <%= if r.item_icon do %>
-            <Fontawesome.icon icon={r.item_icon} style="regular" css={"color: #{r.item_colour}"} />
-          <% else %>
-            &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-          <% end %>
-          &nbsp; <%= r.item_label %>
-        </a>
-      </div>
-    </div>
     """
   end
 
@@ -441,7 +383,7 @@ defmodule MyAppWeb.NavComponents do
             id="signout-link"
           >
             <i class="fa-regular fa-sign-out fa-fw"></i> &nbsp;
-            Sign out <%= @current_user.name %>
+            Sign out {@current_user.name}
           </a>
         </form>
       </div>

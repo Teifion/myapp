@@ -10,6 +10,7 @@ services:
       POSTGRES_PASSWORD: "postgres"
       POSTGRES_DB: "myapp_dev"
     image: "postgres:17.2-bookworm"
+    # profiles: ["postgres"]
     restart: "${DOCKER_RESTART_POLICY:-unless-stopped}"
     stop_grace_period: "3s"
     volumes:

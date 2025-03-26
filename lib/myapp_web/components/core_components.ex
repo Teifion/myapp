@@ -5,7 +5,7 @@ defmodule MyAppWeb.CoreComponents do
 
   use Phoenix.Component
   alias Phoenix.LiveView.JS
-  use Gettext, backend: MyApp.Gettext
+  use Gettext, backend: MyAppWeb.Gettext
   alias Fontawesome
 
   @doc """
@@ -688,9 +688,9 @@ defmodule MyAppWeb.CoreComponents do
     # should be written to the errors.po file. The :count option is
     # set by Ecto and indicates we should also apply plural rules.
     if count = opts[:count] do
-      Gettext.dngettext(MyApp.Gettext, "errors", msg, msg, count, opts)
+      Gettext.dngettext(MyAppWeb.Gettext, "errors", msg, msg, count, opts)
     else
-      Gettext.dgettext(MyApp.Gettext, "errors", msg, opts)
+      Gettext.dgettext(MyAppWeb.Gettext, "errors", msg, opts)
     end
   end
 
